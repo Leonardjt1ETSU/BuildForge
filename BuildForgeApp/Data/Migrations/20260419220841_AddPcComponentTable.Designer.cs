@@ -3,6 +3,7 @@ using System;
 using BuildForgeApp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,61 +11,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BuildForgeApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260419220841_AddPcComponentTable")]
+    partial class AddPcComponentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
-
-            modelBuilder.Entity("BuildForgeApp.Models.Build", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("BuildName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("TotalPrice")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Builds");
-                });
-
-            modelBuilder.Entity("BuildForgeApp.Models.BuildComponent", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("BuildId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PcComponentId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BuildId");
-
-                    b.HasIndex("PcComponentId");
-
-                    b.ToTable("BuildComponents");
-                });
 
             modelBuilder.Entity("BuildForgeApp.Models.PcComponent", b =>
                 {
@@ -308,36 +262,6 @@ namespace BuildForgeApp.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("BuildForgeApp.Models.Build", b =>
-                {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("BuildForgeApp.Models.BuildComponent", b =>
-                {
-                    b.HasOne("BuildForgeApp.Models.Build", "Build")
-                        .WithMany("BuildComponents")
-                        .HasForeignKey("BuildId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BuildForgeApp.Models.PcComponent", "PcComponent")
-                        .WithMany("BuildComponents")
-                        .HasForeignKey("PcComponentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Build");
-
-                    b.Navigation("PcComponent");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -387,16 +311,6 @@ namespace BuildForgeApp.Data.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("BuildForgeApp.Models.Build", b =>
-                {
-                    b.Navigation("BuildComponents");
-                });
-
-            modelBuilder.Entity("BuildForgeApp.Models.PcComponent", b =>
-                {
-                    b.Navigation("BuildComponents");
                 });
 #pragma warning restore 612, 618
         }
