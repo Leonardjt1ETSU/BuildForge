@@ -1,0 +1,40 @@
+@model BuildForgeApp.Models.PcComponent
+
+@{
+    ViewData["Title"] = "Component Details";
+}
+
+<h1>Component Details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">Name</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Brand</dt>
+        <dd class="col-sm-9">@Model.Brand</dd>
+
+        <dt class="col-sm-3">Type</dt>
+        <dd class="col-sm-9">@Model.ComponentType</dd>
+
+        <dt class="col-sm-3">Price</dt>
+        <dd class="col-sm-9">@Model.Price.ToString("C")</dd>
+
+        <dt class="col-sm-3">Socket Type</dt>
+        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.SocketType) ? "N/A" : Model.SocketType)</dd>
+
+        <dt class="col-sm-3">Form Factor</dt>
+        <dd class="col-sm-9">@(string.IsNullOrEmpty(Model.FormFactor) ? "N/A" : Model.FormFactor)</dd>
+
+        <dt class="col-sm-3">Wattage</dt>
+        <dd class="col-sm-9">@(Model.Wattage.HasValue ? Model.Wattage.ToString() : "N/A")</dd>
+
+        <dt class="col-sm-3">Capacity (GB)</dt>
+        <dd class="col-sm-9">@(Model.CapacityGB.HasValue ? Model.CapacityGB.ToString() : "N/A")</dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Index" class="btn btn-secondary">Back to Catalog</a>
+</div>
