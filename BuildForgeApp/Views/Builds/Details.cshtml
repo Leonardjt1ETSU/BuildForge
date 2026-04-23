@@ -1,0 +1,56 @@
+@model BuildForgeApp.Models.Build
+
+@{
+    ViewData["Title"] = "Build Details";
+}
+
+<h1>@Model.BuildName</h1>
+
+<p><strong>Total Price:</strong> @Model.TotalPrice.ToString("C")</p>
+
+<hr />
+
+<h3>Components</h3>
+
+@if (Model.BuildComponents != null && Model.BuildComponents.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.BuildComponents)
+        {
+            <tr>
+                <td>@item.PcComponent?.Name</td>
+                <td>@item.PcComponent?.Brand</td>
+                <td>@item.PcComponent?.Price.ToString("C")</td>
+                <td>
+                    <form asp-action="RemoveComponent" method="post">
+                        <input type="hidden" name="buildId" value="@Model.Id" />
+                        <input type="hidden" name="componentId" value="@item.PcComponentId" />
+                        <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No components added yet.</p>
+}
+
+<hr />
+
+<a asp-controller="PcComponents" asp-action="Index" asp-route-buildId="@Model.Id" class="btn btn-primary">
+    Add Components
+</a>
+
+<a asp-action="Index" class="btn btn-secondary">Back to Builds</a>
