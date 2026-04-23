@@ -1,0 +1,12 @@
+@model BuildForgeApp.Models.Build
+
+<h1>Create Build</h1>
+
+<form asp-controller="Builds" asp-action="Create" method="post">
+    <div class="mb-3">
+        <label asp-for="BuildName"></label>
+        <input asp-for="BuildName" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
