@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("BuildForgeApp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8f1592469893ce96b54c4f607d963bc1329bd27a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8d2420d1daa575804fd58ba4fe0e03b370be7409")]
 [assembly: System.Reflection.AssemblyProductAttribute("BuildForgeApp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("BuildForgeApp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
