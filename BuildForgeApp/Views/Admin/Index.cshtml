@@ -1,0 +1,59 @@
+@model IEnumerable<BuildForgeApp.Models.PcComponent>
+
+@{
+    ViewData["Title"] = "Admin Component Management";
+}
+
+<h1>Component Management</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Add New Component</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Type</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Active</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Brand</td>
+            <td>@item.ComponentType</td>
+            <td>@item.Price.ToString("C")</td>
+            <td>@item.StockQuantity</td>
+            <td>@(item.IsActive ? "Yes" : "No")</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
+
+                @if (item.IsActive)
+                {
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Deactivate</a>
+                }
+                else
+                {
+                    <form asp-action="Reactivate" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-success">Reactivate</button>
+                    </form>
+                    <form asp-action="Remove" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Remove</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

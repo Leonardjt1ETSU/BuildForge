@@ -1,0 +1,101 @@
+@model BuildForgeApp.Models.Build
+
+@{
+    ViewData["Title"] = "Build Details";
+    var warnings = ViewBag.Warnings as List<string> ?? new List<string>();
+}
+
+<h1>@Model.BuildName</h1>
+
+<p><strong>Total Price:</strong> @Model.TotalPrice.ToString("C")</p>
+
+<button id="checkCompatibilityBtn"
+        class="btn btn-outline-warning mb-3"
+        data-build-id="@Model.Id">
+    Recheck Compatibility
+</button>
+
+<div id="compatibilityResult"></div>
+
+@if (warnings.Any())
+{
+    <div class="alert alert-warning">
+        <strong>Compatibility Issues:</strong>
+        <ul class="mb-0">
+            @foreach (var warning in warnings)
+            {
+                <li>@warning</li>
+            }
+        </ul>
+    </div>
+}
+else
+{
+    <div class="alert alert-success">
+        All components are compatible.
+    </div>
+}
+
+<hr />
+
+<h3>Components</h3>
+
+@if (Model.BuildComponents != null && Model.BuildComponents.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Type</th>
+                <th>Price</th>
+                <th>Socket</th>
+                <th>Wattage</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in Model.BuildComponents)
+        {
+            <tr>
+                <td>@item.PcComponent?.Name</td>
+                <td>@item.PcComponent?.Brand</td>
+                <td>@item.PcComponent?.ComponentType</td>
+                <td>@item.PcComponent?.Price.ToString("C")</td>
+                <td>@(string.IsNullOrEmpty(item.PcComponent?.SocketType) ? "N/A" : item.PcComponent?.SocketType)</td>
+                <td>@(item.PcComponent?.Wattage?.ToString() ?? "N/A")</td>
+                <td>
+                    <form asp-controller="Builds" asp-action="RemoveComponent" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden" name="buildId" value="@Model.Id" />
+                        <input type="hidden" name="componentId" value="@item.PcComponentId" />
+
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Remove
+                        </button>
+                    </form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No components added yet.</p>
+}
+
+<hr />
+
+<a asp-controller="PcComponents" asp-action="Index" asp-route-buildId="@Model.Id" class="btn btn-primary">
+    Add Components
+</a>
+
+<a asp-action="Index" class="btn btn-secondary">
+    Back to Builds
+</a>
+
+@section Scripts {
+    <script src="~/js/compatibilityCheck.js"></script>
+}

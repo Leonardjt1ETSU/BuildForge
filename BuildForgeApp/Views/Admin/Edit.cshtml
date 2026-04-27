@@ -1,0 +1,89 @@
+@model BuildForgeApp.Models.PcComponent
+
+@{
+    ViewData["Title"] = "Edit Component";
+}
+
+<h1>Edit Component</h1>
+
+<form asp-action="Edit" method="post">
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Brand" class="form-label"></label>
+        <input asp-for="Brand" class="form-control" />
+        <span asp-validation-for="Brand" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ComponentType" class="form-label"></label>
+        <select asp-for="ComponentType" class="form-select">
+            <option value="CPU">CPU</option>
+            <option value="Motherboard">Motherboard</option>
+            <option value="GPU">GPU</option>
+            <option value="RAM">RAM</option>
+            <option value="PSU">PSU</option>
+            <option value="Case">Case</option>
+            <option value="Storage">Storage</option>
+        </select>
+        <span asp-validation-for="ComponentType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Price" class="form-label"></label>
+        <input asp-for="Price" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="SocketType" class="form-label"></label>
+        <input asp-for="SocketType" class="form-control" />
+        <span asp-validation-for="SocketType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="FormFactor" class="form-label"></label>
+        <input asp-for="FormFactor" class="form-control" />
+        <span asp-validation-for="FormFactor" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Wattage" class="form-label"></label>
+        <input asp-for="Wattage" class="form-control" />
+        <span asp-validation-for="Wattage" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="CapacityGB" class="form-label"></label>
+        <input asp-for="CapacityGB" class="form-control" />
+        <span asp-validation-for="CapacityGB" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StockQuantity" class="form-label"></label>
+        <input asp-for="StockQuantity" class="form-control" />
+        <span asp-validation-for="StockQuantity" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="IsActive" class="form-check-input" />
+        <label asp-for="IsActive" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

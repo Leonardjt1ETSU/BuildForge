@@ -29,3 +29,61 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+:root {
+    --buildforge-dark: #121826;
+    --buildforge-blue: #2563eb;
+    --buildforge-accent: #38bdf8;
+    --buildforge-light: #f8fafc;
+}
+
+body {
+    background-color: var(--buildforge-light);
+}
+
+.navbar {
+    background-color: var(--buildforge-dark) !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link {
+    color: white !important;
+}
+
+.navbar .nav-link:hover {
+    color: var(--buildforge-accent) !important;
+}
+
+.btn-primary {
+    background-color: var(--buildforge-blue);
+    border-color: var(--buildforge-blue);
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    border-color: #1d4ed8;
+}
+
+.card-buildforge {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, .08);
+}
+
+.page-header {
+    background: linear-gradient(135deg, var(--buildforge-dark), var(--buildforge-blue));
+    color: white;
+    padding: 2rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+}
+
+.table {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.alert {
+    border-radius: 12px;
+}

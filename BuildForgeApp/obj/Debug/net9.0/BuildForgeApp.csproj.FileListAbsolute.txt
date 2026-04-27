@@ -217,7 +217,6 @@
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/nezrqnk58p-muycvpuwrr.gz
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/v0zgfp0y55-87fc7y1x7t.gz
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/yfc7ypekbg-mlv21k5csn.gz
-/Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/iutbrk9yd3-b9sayid5wm.gz
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/mjklkakeup-61n19gt1b8.gz
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/lv79oinx8b-xtxxf3hu2r.gz
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/v3rzds3ae4-bqjiyaj88i.gz
@@ -291,3 +290,5 @@
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/BuildForgeApp.pdb
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/BuildForgeApp.genruntimeconfig.cache
 /Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/ref/BuildForgeApp.dll
+/Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/iutbrk9yd3-3jojgojatv.gz
+/Users/elijahgillespie/FinalProjectLabForge/BuildForge/BuildForgeApp/obj/Debug/net9.0/compressed/s8u4a8vuwz-chbg7mi15x.gz

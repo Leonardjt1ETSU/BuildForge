@@ -34,9 +34,7 @@ namespace BuildForgeApp.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var userId = _userManager.GetUserId(User);
 
@@ -46,11 +44,13 @@ namespace BuildForgeApp.Controllers
                 .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
 
             if (build == null)
-            {
                 return NotFound();
-            }
 
-            build.TotalPrice = CalculateTotalPrice(build);
+            build.TotalPrice = build.BuildComponents
+                .Where(bc => bc.PcComponent != null)
+                .Sum(bc => bc.PcComponent!.Price);
+            var warnings = GetCompatibilityWarnings(build);
+            ViewBag.Warnings = warnings;
 
             return View(build);
         }
@@ -62,35 +62,40 @@ namespace BuildForgeApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BuildName")] Build build)
+        public async Task<IActionResult> Create(Build build)
         {
             var userId = _userManager.GetUserId(User);
-
             if (userId == null)
             {
-                return Challenge();
+                ModelState.AddModelError("", "You must be logged in to create a build.");
+                return View(build);
             }
-
-            if (ModelState.IsValid)
+            if (string.IsNullOrWhiteSpace(build.BuildName))
+            {
+                ModelState.AddModelError("BuildName", "Build name is required.");
+                return View(build);
+            }
+            try
             {
                 build.UserId = userId;
                 build.CreatedDate = DateTime.Now;
                 build.TotalPrice = 0;
 
-                _context.Add(build);
+                _context.Builds.Add(build);
                 await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-
-            return View(build);
+            catch
+            {
+                ModelState.AddModelError("", "Something went wrong while creating the build. Please try again.");
+                return View(build);
+            }
         }
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var userId = _userManager.GetUserId(User);
 
@@ -98,51 +103,34 @@ namespace BuildForgeApp.Controllers
                 .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
 
             if (build == null)
-            {
                 return NotFound();
-            }
 
             return View(build);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BuildName")] Build build)
+        public async Task<IActionResult> Edit(int id, string buildName)
         {
-            if (id != build.Id)
-            {
-                return NotFound();
-            }
-
             var userId = _userManager.GetUserId(User);
-            var existingBuild = await _context.Builds
-                .Include(b => b.BuildComponents)
-                .ThenInclude(bc => bc.PcComponent)
+
+            var build = await _context.Builds
                 .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
 
-            if (existingBuild == null)
-            {
+            if (build == null)
                 return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                existingBuild.BuildName = build.BuildName;
-                existingBuild.TotalPrice = CalculateTotalPrice(existingBuild);
+            build.BuildName = buildName;
 
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            await _context.SaveChangesAsync();
 
-            return View(build);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var userId = _userManager.GetUserId(User);
 
@@ -150,11 +138,39 @@ namespace BuildForgeApp.Controllers
                 .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
 
             if (build == null)
-            {
                 return NotFound();
-            }
 
             return View(build);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveComponent(int buildId, int componentId)
+        {
+            var buildComponent = await _context.BuildComponents
+                .FirstOrDefaultAsync(bc => bc.BuildId == buildId && bc.PcComponentId == componentId);
+
+            if (buildComponent == null)
+                return NotFound();
+
+            var component = await _context.PcComponents
+                .FirstOrDefaultAsync(c => c.Id == componentId);
+
+            if (component != null)
+            {
+                var build = await _context.Builds
+                    .FirstOrDefaultAsync(b => b.Id == buildId);
+
+                if (build != null)
+                {
+                    build.TotalPrice -= component.Price;
+                }
+            }
+
+            _context.BuildComponents.Remove(buildComponent);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Builds", new { id = buildId });
         }
 
         [HttpPost, ActionName("Delete")]
@@ -167,21 +183,61 @@ namespace BuildForgeApp.Controllers
                 .FirstOrDefaultAsync(b => b.Id == id && b.UserId == userId);
 
             if (build == null)
-            {
                 return NotFound();
+
+            try
+            {
+                _context.Builds.Remove(build);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                ModelState.AddModelError("", "This build could not be deleted. Please try again.");
+                return View("Delete", build);
             }
 
-            _context.Builds.Remove(build);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
+            
         }
 
-        private decimal CalculateTotalPrice(Build build)
+        // Checks compatibility and returns warning messages
+        private List<string> GetCompatibilityWarnings(Build build)
         {
-            return build.BuildComponents
+            var warnings = new List<string>();
+
+            var components = build.BuildComponents
                 .Where(bc => bc.PcComponent != null)
-                .Sum(bc => bc.PcComponent!.Price);
+                .Select(bc => bc.PcComponent!)
+                .ToList();
+
+            var cpu = components.FirstOrDefault(c => c.ComponentType == "CPU");
+            var motherboard = components.FirstOrDefault(c => c.ComponentType == "Motherboard");
+            var psu = components.FirstOrDefault(c => c.ComponentType == "PSU");
+
+            // CPu and Motherboard compatibility
+            if (cpu != null && motherboard != null &&
+                !string.IsNullOrEmpty(cpu.SocketType) &&
+                !string.IsNullOrEmpty(motherboard.SocketType) &&
+                cpu.SocketType != motherboard.SocketType)
+            {
+                warnings.Add($"CPU socket mismatch: {cpu.SocketType} vs {motherboard.SocketType}");
+            }
+
+            // PSU wattage check
+            if (psu != null && psu.Wattage.HasValue)
+            {
+                int totalWattage = components
+                    .Where(c => c.ComponentType != "PSU")
+                    .Sum(c => c.Wattage ?? 0);
+
+                if (totalWattage > psu.Wattage.Value)
+                {
+                    warnings.Add($"Power supply too weak. Required: {totalWattage}W, PSU: {psu.Wattage}W");
+                }
+            }
+
+            return warnings;
         }
     }
 }
