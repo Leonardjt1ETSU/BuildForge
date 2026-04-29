@@ -20,7 +20,7 @@ namespace BuildForgeApp.Controllers.Api
             _context = context;
             _userManager = userManager;
         }
-        
+
         [HttpGet("{buildId}")]
         public async Task<IActionResult> CheckCompatibility(int buildId)
         {
@@ -54,16 +54,50 @@ namespace BuildForgeApp.Controllers.Api
                 .Select(bc => bc.PcComponent!)
                 .ToList();
 
-            var cpu = components.FirstOrDefault(c => c.ComponentType == "CPU");
-            var motherboard = components.FirstOrDefault(c => c.ComponentType == "Motherboard");
-            var psu = components.FirstOrDefault(c => c.ComponentType == "PSU");
+            var cpus = components.Where(c => c.ComponentType == "CPU").ToList();
+            var motherboards = components.Where(c => c.ComponentType == "Motherboard").ToList();
+            var psus = components.Where(c => c.ComponentType == "PSU").ToList();
+
+            var cpu = cpus.FirstOrDefault();
+            var motherboard = motherboards.FirstOrDefault();
+            var psu = psus.FirstOrDefault();
+
+            if (cpus.Count == 0)
+            {
+                warnings.Add("No CPU selected.");
+            }
+
+            if (cpus.Count > 1)
+            {
+                warnings.Add("Multiple CPUs selected. Only one CPU is allowed.");
+            }
+
+            if (motherboards.Count == 0)
+            {
+                warnings.Add("No motherboard selected.");
+            }
+
+            if (motherboards.Count > 1)
+            {
+                warnings.Add("Multiple motherboards selected. Only one motherboard is allowed.");
+            }
+
+            if (psus.Count == 0)
+            {
+                warnings.Add("No power supply selected.");
+            }
+
+            if (psus.Count > 1)
+            {
+                warnings.Add("Multiple power supplies selected. Only one PSU is allowed.");
+            }
 
             if (cpu != null && motherboard != null &&
                 !string.IsNullOrEmpty(cpu.SocketType) &&
                 !string.IsNullOrEmpty(motherboard.SocketType) &&
                 !cpu.SocketType.Equals(motherboard.SocketType, StringComparison.OrdinalIgnoreCase))
             {
-                warnings.Add($"CPU socket mismatch: {cpu.SocketType} vs {motherboard.SocketType}");
+                warnings.Add($"CPU socket mismatch: {cpu.SocketType} vs {motherboard.SocketType}.");
             }
 
             if (psu != null && psu.Wattage.HasValue)
@@ -74,7 +108,7 @@ namespace BuildForgeApp.Controllers.Api
 
                 if (totalWattage > psu.Wattage.Value)
                 {
-                    warnings.Add($"Power supply too weak. Required: {totalWattage}W, PSU: {psu.Wattage}W");
+                    warnings.Add($"Power supply too weak. Required: {totalWattage}W, PSU: {psu.Wattage.Value}W.");
                 }
             }
 
